@@ -56,6 +56,7 @@ docker stop testcontainer
 docker rm testcontainer
 ```
 ### Job2 - build,test (master branch)
+```bash
 docker stop testcontainer || true
 docker rm testcontainer || true
 docker build -t devopstejas/myapp:latest .
@@ -66,7 +67,7 @@ sleep 10
 curl -f http://localhost:8180 || exit 1
 docker stop testcontainer
 docker rm testcontainer
-
+```
 ### Job3 - prod
 ```bash
 docker stop prodcontainer || true
