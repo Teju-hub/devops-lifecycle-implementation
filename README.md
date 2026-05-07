@@ -41,6 +41,40 @@ industry-standard tools on AWS.
 - Runs on: prod-server
 - Steps: docker pull → docker run on port 80
 
+## Jenkins Jobs - Build Steps
+### Job1 - build,test (develop branch)
+```bash
+docker stop testcontainer || true
+docker rm testcontainer || true
+docker build -t devopstejas/myapp:latest .
+docker login -u devopstejas -p $DOCKERHUB_PASS
+docker push devopstejas/myapp:latest
+docker run -d -p 8180:80 --name testcontainer devopstejas/myapp:latest
+sleep 10
+curl -f http://localhost:8180 || exit 1
+docker stop testcontainer
+docker rm testcontainer
+```
+### Job2 - build,test (master branch)
+docker stop testcontainer || true
+docker rm testcontainer || true
+docker build -t devopstejas/myapp:latest .
+docker login -u devopstejas -p $DOCKERHUB_PASS
+docker push devopstejas/myapp:latest
+docker run -d -p 8180:80 --name testcontainer devopstejas/myapp:latest
+sleep 10
+curl -f http://localhost:8180 || exit 1
+docker stop testcontainer
+docker rm testcontainer
+
+### Job3 - prod
+```bash
+docker stop prodcontainer || true
+docker rm prodcontainer || true
+docker pull devopstejas/myapp:latest
+docker run -d -p 80:80 --restart always --name prodcontainer devopstejas/myapp:latest
+```
+
 ## Ansible Playbook
 Installs on all machines: Java 21, Git, Docker
 Installs on master only: Jenkins
